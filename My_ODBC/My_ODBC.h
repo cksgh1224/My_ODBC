@@ -35,7 +35,7 @@ typedef int(*SQL_RESULT_RECORD)(void* ap_owner, int a_step_index, void* ap_data,
 
 
 /*
-// 데이터 객체 클래스
+// ex) 데이터 객체 클래스
 class User
 {
 private:

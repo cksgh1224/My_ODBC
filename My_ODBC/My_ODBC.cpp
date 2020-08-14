@@ -27,7 +27,7 @@ void My_Odbc::InitObject()
 // 서버 연결 (성공:1반환)
 int My_Odbc::Connect(const wchar_t* ap_dsn, const wchar_t* ap_id, const wchar_t* ap_pw, void* ap_owner)
 {
-	TR("My_Odbc::Connect\n");
+	TR("My_Odbc::Connect - 서버 연결\n");
 	
 	mp_owner = ap_owner;
 	int result = 1;
@@ -60,7 +60,7 @@ int My_Odbc::Connect(const wchar_t* ap_dsn, const wchar_t* ap_id, const wchar_t*
 			{
 				// ODBC를 사용하여 데이터베이스 서버에 성공적으로 접속한 경우
 				m_connect_flag = 1;
-				TR("데이터베이스 서버 접속 성공\n");
+				TR("My_Odbc::Connect - 데이터베이스 서버 접속 성공\n");
 			}
 			else
 			{
@@ -68,18 +68,18 @@ int My_Odbc::Connect(const wchar_t* ap_dsn, const wchar_t* ap_id, const wchar_t*
 				if (mh_odbc != SQL_NULL_HDBC) SQLFreeHandle(SQL_HANDLE_DBC, mh_odbc);
 				if (mh_environment != SQL_NULL_HENV) SQLFreeHandle(SQL_HANDLE_ENV, mh_environment);
 				result = -1; // 연결 실패
-				TR("데이터베이스 서버 접속 실패\n");
+				TR("My_Odbc::Connect - 데이터베이스 서버 접속 실패\n");
 			}
 		}
 		else
 		{
-			TR("데이터베이스 연결 정보 구성 실패\n");
+			TR("My_Odbc::Connect - 데이터베이스 연결 정보 구성 실패\n");
 			result = -2; // 연결 정보 구성 실패
 		}
 	}
 	else
 	{
-		TR("시스템에 설치된 ODBC 사용 불가\n");
+		TR("My_Odbc::Connect - 시스템에 설치된 ODBC 사용 불가\n");
 		result = -3; // 시스템에 설치된 ODBC 사용 불가
 	}
 
@@ -90,13 +90,12 @@ int My_Odbc::Connect(const wchar_t* ap_dsn, const wchar_t* ap_id, const wchar_t*
 // 서버 연결 해제
 void My_Odbc::Disconnect()
 {
-	TR("My_Odbc::Disconnect()\n");
+	TR("My_Odbc::Disconnect - 서버 연결 해제\n");
 
 	if (m_connect_flag == 1) // 서버에 연결되어 있는 경우 ODBC와 관련되어 구성했던 정보 제거
 	{
 		if (mh_odbc != SQL_NULL_HDBC) SQLFreeHandle(SQL_HANDLE_DBC, mh_odbc); // 연결 핸들 해제
 		if (mh_environment != SQL_NULL_HENV) SQLFreeHandle(SQL_HANDLE_ENV, mh_environment); // 환경 핸들 해제
-		TR("데이터베이스 서버 연결 해제\n");
 	}
 	InitObject();
 }
@@ -107,7 +106,7 @@ void My_Odbc::Disconnect()
 // 결과값을 특별하게 처리하지 않는다
 int My_Odbc::ExecQuery(const wchar_t* ap_query)
 {
-	TR("My_Odbc::ExecQuery(const wchar_t* ap_query)\n");
+	TR("My_Odbc::ExecQuery(const wchar_t* ap_query) - 명령문 실행\n");
 	
 	SQLHSTMT h_statement; // 명령문 핸들
 	int result = 0;
@@ -124,10 +123,10 @@ int My_Odbc::ExecQuery(const wchar_t* ap_query)
 		// 성공적으로 완료되었는지 체크
 		if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 		{
-			TR("Odbc::ExecQuery(const wchar_t* ap_query) -> SQL 명령문 실행 성공\n");
+			TR("My_Odbc::ExecQuery(const wchar_t* ap_query) - SQL 명령문 실행 성공\n");
 			result = 1;
 		}
-		else TR("Odbc::ExecQuery(const wchar_t* ap_query) -> SQL 명령문 실행 실패\n");
+		else TR("My_Odbc::ExecQuery(const wchar_t* ap_query) - SQL 명령문 실행 실패\n");
 
 		// Commit 명령 수행이 완료되었다는 것을 설정 (SQLEndTran: 트랜잭션 커밋 또는 롤백)
 		SQLEndTran(SQL_HANDLE_ENV, mh_environment, SQL_COMMIT);
@@ -136,10 +135,10 @@ int My_Odbc::ExecQuery(const wchar_t* ap_query)
 		// Query 문을 위해 할당할 메모리 해제
 		SQLFreeHandle(SQL_HANDLE_STMT, h_statement);
 	}
-	else TR("Odbc::ExecQuery(const wchar_t* ap_query) -> Query 문을 위한 메모리 할당 실패\n")
+	else TR("My_Odbc::ExecQuery(const wchar_t* ap_query) - Query 문을 위한 메모리 할당 실패\n")
 
 
-		return result;
+	return result;
 }
 
 
@@ -201,7 +200,7 @@ int My_Odbc::ExecQuery(const wchar_t* ap_query, int a_record_size, SET_RECORD_IN
 		RETCODE ret = SQLExecDirect(h_statement, (SQLWCHAR*)ap_query, SQL_NTS); // CString -> SQLWCHAR* : (SQLWCHAR*)(const wchar_t*)CString
 		if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 		{
-			TR("Odbc::ExecQuery(select) -> SQL 명령문 실행 성공\n");
+			TR("My_Odbc::ExecQuery(select) - SQL 명령문 실행 성공\n");
 			result = 1; // 명령문 실행 성공
 
 			// 결과 집합에서 지정된 데이터 행 집합을 반환, 바인딩된 열에 대해 데이터를 반환
@@ -210,24 +209,24 @@ int My_Odbc::ExecQuery(const wchar_t* ap_query, int a_record_size, SET_RECORD_IN
 				// SQL 명령문에 의해서 가져온 데이터를 처리하는 작업
 				if ((*sql_result_record)(mp_owner, index, p_data, record_num, p_state, option))
 				{
-					TR("Odbc::ExecQuery(select) -> SET_RECORD_INFO 성공\n");
+					TR("My_Odbc::ExecQuery(select) - SET_RECORD_INFO 성공\n");
 				}
-				else TR("Odbc::ExecQuery(select) -> SET_RECORD_INFO 실패\n");
+				else TR("My_Odbc::ExecQuery(select) - SET_RECORD_INFO 실패\n");
 				index++;
 			}
 		}
-		else TR("Odbc::ExecQuery(select) -> SQL 명령문 실행 실패\n");
+		else TR("My_Odbc::ExecQuery(select) - SQL 명령문 실행 실패\n");
 
 		// Query 문을 위해 할당할 메모리 해제
 		SQLFreeHandle(SQL_HANDLE_STMT, h_statement);
 	}
-	else TR("Odbc::ExecQuery(select) -> Query 문을 위한 메모리 할당 실패\n")
+	else TR("My_Odbc::ExecQuery(select) - Query 문을 위한 메모리 할당 실패\n")
 
 		// index가 0이면 읽은 데이터가 없는거
 		if (index == 0)
 		{
 			result = 0; // 검색된 데이터가 없음
-			TR("Odbc::ExecQuery(select) -> 검색된 데이터가 없음\n");
+			TR("My_Odbc::ExecQuery(select) - 검색된 데이터가 없음\n");
 		}
 
 	delete[] p_data;
