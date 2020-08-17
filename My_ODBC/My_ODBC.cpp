@@ -96,6 +96,11 @@ void My_Odbc::Disconnect()
 	{
 		if (mh_odbc != SQL_NULL_HDBC) SQLFreeHandle(SQL_HANDLE_DBC, mh_odbc); // 연결 핸들 해제
 		if (mh_environment != SQL_NULL_HENV) SQLFreeHandle(SQL_HANDLE_ENV, mh_environment); // 환경 핸들 해제
+		TR("My_Odbc::Disconnect - 해제 성공\n");
+	}
+	else
+	{
+		TR("My_Odbc::Disconnect - 서버에 연결되어 있습니다\n");
 	}
 	InitObject();
 }

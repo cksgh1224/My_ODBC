@@ -19,9 +19,9 @@
 
 // ODBC_API 라이브러리
 //#ifdef _DEBUG
-//	#pragma comment(lib, "D_MY_ODBC.lib")
+//	#pragma comment(lib, "D_My_ODBC.lib")
 //#else
-//	#pragma comment(lib, "R_MY_ODBC.lib")
+//	#pragma comment(lib, "R_My_ODBC.lib")
 //#endif
 
 
